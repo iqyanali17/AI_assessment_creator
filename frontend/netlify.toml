@@ -2,7 +2,6 @@
   base = "frontend"
   command = "npm run build && npm run export"
   publish = "frontend/out"
-  functions = "frontend/netlify/functions"
 
 [dev]
   command = "npm run dev"
