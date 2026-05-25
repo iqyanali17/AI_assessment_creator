@@ -6,6 +6,7 @@
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
+    "export": "next export",
     "lint": "next lint"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
+    "@netlify/functions": "^2.8.2",
     "@types/node": "^20.17.10",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
