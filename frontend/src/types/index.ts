@@ -36,8 +36,8 @@ export interface Question {
   text: string;
   difficulty: Difficulty;
   marks: number;
-  options?: string[];           // for MCQ type
-  correctAnswer?: string;       // optional
+  options?: string[];
+  correctAnswer?: string;
 }
 
 export interface Section {

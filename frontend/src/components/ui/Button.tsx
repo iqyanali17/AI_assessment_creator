@@ -24,19 +24,12 @@ export const Button: React.FC<ButtonProps> = ({
         clsx(
           'inline-flex items-center justify-center font-semibold transition-all duration-200 outline-none active:scale-95 disabled:opacity-50 disabled:pointer-events-none select-none',
           {
-            // Primary: solid black pill — matches "Create Your First Assignment" CTA
             'bg-[#1a1a1a] text-white hover:bg-[#2a2a2a] rounded-full':
               variant === 'primary',
-
-            // Outline variant
             'border border-[#d1d5db] text-[#1a1a1a] bg-white hover:bg-[#f5f5f5] rounded-full':
               variant === 'outline',
-
-            // Sidebar-glow: dark pill with visible orange ring border — matches screenshot
             'bg-[#1a1a1a] text-white rounded-full ring-1 ring-brandOrange hover:ring-2 hover:shadow-brand-glow':
               variant === 'sidebar-glow',
-
-            // FAB: white circle with orange icon
             'bg-white text-brandOrange border border-[#e5e5e5] hover:scale-105 shadow-md hover:shadow-lg rounded-full':
               variant === 'fab',
           },

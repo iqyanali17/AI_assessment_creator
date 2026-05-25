@@ -158,7 +158,7 @@ export default function Home() {
             /* ── AI Teacher's Toolkit — Coming Soon ── */
             <div className="relative z-20 flex-1 flex items-center justify-center">
               <div className="text-center font-semibold text-[#5e5e5e] text-sm tracking-wider uppercase select-none">
-                AI Teacher's Toolkit — Coming Soon
+                AI Teacher&apos;s Toolkit — Coming Soon
               </div>
             </div>
           ) : (

@@ -5,6 +5,9 @@ node_modules/
 .next/
 out/
 
+# ── Backend build output ────────────────────────────────────────────────────
+dist/
+
 # ── TypeScript build info ────────────────────────────────────────────────────
 *.tsbuildinfo
 

@@ -1,23 +1,17 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // ── Output ──────────────────────────────────────────────────────────────
-  // Standalone output for lean Docker/production deployments
   output: 'standalone',
 
-  // ── Compiler ────────────────────────────────────────────────────────────
   compiler: {
-    // Remove console.log in production builds
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
   },
 
-  // ── Images ──────────────────────────────────────────────────────────────
   images: {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
   },
 
-  // ── Security & performance headers ──────────────────────────────────────
   async headers() {
     return [
       {
@@ -31,7 +25,6 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Long-lived cache for static assets
         source: '/_next/static/(.*)',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
@@ -40,7 +33,6 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // ── Webpack — code splitting & bundle optimisation ───────────────────────
   webpack(config, { isServer }) {
     if (!isServer) {
       config.optimization = {
@@ -48,14 +40,12 @@ const nextConfig: NextConfig = {
         splitChunks: {
           chunks: 'all',
           cacheGroups: {
-            // Vendor chunk — node_modules
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendors',
               chunks: 'all',
               priority: 10,
             },
-            // Lucide icons — large package, isolate it
             lucide: {
               test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
               name: 'lucide',

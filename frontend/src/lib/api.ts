@@ -1,7 +1,8 @@
 import { Assignment, GeneratedPaper, ApiResponse } from '@/types';
 import { AssessmentStatus, QuestionType } from '@/types/enums';
+import { API_URL } from '@/lib/config';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const BASE_URL = API_URL;
 
 // ── Types ────────────────────────────────────────────────────────────────────
 

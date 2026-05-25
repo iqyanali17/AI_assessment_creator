@@ -1,8 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { AssessmentStatus } from '@/types/enums';
-
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+import { API_URL } from '@/lib/config';
 
 // ── Event payload types ───────────────────────────────────────────────────────
 export interface AssignmentStatusEvent {
@@ -30,7 +29,7 @@ let globalSocket: Socket | null = null;
 
 function getSocket(): Socket {
   if (!globalSocket || !globalSocket.connected) {
-    globalSocket = io(SOCKET_URL, {
+    globalSocket = io(API_URL, {
       path: '/api/socket',
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -54,7 +53,6 @@ interface UseSocketOptions {
 export function useSocket(options: UseSocketOptions = {}) {
   const { onStatus, onCompleted, onFailed, filterAssignmentId } = options;
 
-  // Keep latest callbacks in refs so we don't re-subscribe on every render
   const onStatusRef = useRef(onStatus);
   const onCompletedRef = useRef(onCompleted);
   const onFailedRef = useRef(onFailed);

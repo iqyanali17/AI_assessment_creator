@@ -15,6 +15,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { createAssignment, uploadFile, CreateAssignmentBody } from '@/lib/api';
+import { API_URL } from '@/lib/config';
 import { useAssessmentStore } from '@/store/useAssessmentStore';
 import { QuestionType } from '@/types/enums';
 
@@ -154,7 +155,7 @@ export const CreateAssignmentPage: React.FC<CreateAssignmentPageProps> = ({
     setUploadProgress(0);
     try {
       const uploaded = await uploadFile(selected, setUploadProgress);
-      setUploadedUrl(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${uploaded.url}`);
+      setUploadedUrl(`${API_URL}${uploaded.url}`);
     } catch {
       setFileError('Upload failed. Please try again.');
       setFile(null);

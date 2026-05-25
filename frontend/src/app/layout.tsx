@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     'Create, manage and grade assignments with AI. Set up rubrics, define marking criteria, and let AI generate question papers instantly.',
   keywords: ['AI assessment', 'assignment creator', 'question paper generator', 'VedaAI'],
   authors: [{ name: 'VedaAI' }],
-  robots: { index: false, follow: false }, // private app — no indexing
+  robots: { index: false, follow: false },
   openGraph: {
     title: 'VedaAI — AI Assessment Creator',
     description: 'AI-powered assignment and question paper generator for educators.',
@@ -43,8 +43,14 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${outfit.variable} ${bricolage.variable}`}>
-      <body className="antialiased font-sans">{children}</body>
+    <html
+      lang="en"
+      className={`${outfit.variable} ${bricolage.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="antialiased font-sans" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }
