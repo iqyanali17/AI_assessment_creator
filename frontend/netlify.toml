@@ -1,0 +1,25 @@
+[build]
+  base = "frontend"
+  command = "npm run build && npm run export"
+  publish = "frontend/out"
+
+[dev]
+  command = "npm run dev"
+  port = 3000
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://ai-assessment-creator-u42o.onrender.com/api/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/socket.io/*"
+  to = "https://ai-assessment-creator-u42o.onrender.com/socket.io/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
