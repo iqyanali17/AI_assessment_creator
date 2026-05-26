@@ -1,11 +1,62 @@
+import fs from 'fs';
 import { IGeneratedPaper } from '@/models/GeneratedPaper';
 import { IAssignment } from '@/models/Assignment';
-import puppeteer from 'puppeteer';
+import puppeteer, { type Browser } from 'puppeteer';
 
 const DIFFICULTY_LABEL: Record<string, { label: string; color: string }> = {
   easy: { label: 'Easy', color: '#15803d' },
   medium: { label: 'Moderate', color: '#a16207' },
   hard: { label: 'Challenging', color: '#b91c1c' },
+};
+
+const DEFAULT_PUPPETEER_ARGS = [
+  '--no-sandbox',
+  '--disable-setuid-sandbox',
+  '--disable-dev-shm-usage',
+  '--font-render-hinting=none',
+];
+
+const getExecutablePath = async () => {
+  // Priority 1: Environment variable (for production deployments)
+  const envExecutablePath = process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_BIN;
+
+  if (envExecutablePath) {
+    if (fs.existsSync(envExecutablePath)) {
+      console.log(`Using Chrome from env: ${envExecutablePath}`);
+      return envExecutablePath;
+    }
+    console.warn(`Chrome path from env not found: ${envExecutablePath}`);
+  }
+
+  // Priority 2: Bundled Chromium (for local development)
+  try {
+    const bundledPath = await puppeteer.executablePath();
+    if (bundledPath && fs.existsSync(bundledPath)) {
+      console.log(`Using bundled Chromium: ${bundledPath}`);
+      return bundledPath;
+    }
+  } catch (error) {
+    console.warn('Bundled Chromium not found:', error);
+  }
+
+  // Priority 3: Common Linux paths (for Render, Railway, etc.)
+  const commonChromePaths = [
+    '/usr/bin/chromium-browser',
+    '/usr/bin/chromium',
+    '/usr/bin/google-chrome-stable',
+    '/usr/bin/google-chrome',
+    '/snap/bin/chromium',
+  ];
+
+  for (const chromePath of commonChromePaths) {
+    if (fs.existsSync(chromePath)) {
+      console.log(`Using Chrome from system: ${chromePath}`);
+      return chromePath;
+    }
+  }
+
+  console.error('No Chrome/Chromium executable found!');
+  return undefined;
 };
 
 function escapeHtml(text: string): string {
@@ -252,21 +303,53 @@ function getSectionLabel(sectionTitle: string): string {
 export const generateQuestionPaperPdf = async (assignment: IAssignment, paper: IGeneratedPaper): Promise<Buffer> => {
   const html = buildHtml(assignment, paper);
 
-  let browser;
+  let browser: Browser | null = null;
   try {
+    const executablePath = await getExecutablePath();
+
+    if (!executablePath) {
+      throw new Error(
+        'Chrome/Chromium executable not found. Please ensure Chrome is installed on the server. ' +
+        'For Render: Set PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser in environment variables.'
+      );
+    }
+
+    console.log('Launching browser for PDF generation...');
     browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      args: DEFAULT_PUPPETEER_ARGS,
+      executablePath,
+      timeout: 30000,
     });
+
+    console.log('Browser launched, creating page...');
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    await page.setViewport({ width: 1240, height: 1754, deviceScaleFactor: 1 });
+    
+    console.log('Setting HTML content...');
+    await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+    console.log('Generating PDF...');
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' },
+      preferCSSPageSize: true,
     });
+
+    console.log('PDF generated successfully');
     return Buffer.from(pdfBuffer);
+  } catch (error) {
+    console.error('PDF generation failed:', error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    throw error;
   } finally {
-    if (browser) await browser.close();
+    if (browser) {
+      console.log('Closing browser...');
+      await browser.close();
+    }
   }
 };
