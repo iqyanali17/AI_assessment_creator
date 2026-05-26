@@ -6,7 +6,8 @@
     "dev": "ts-node -r tsconfig-paths/register src/server.ts",
     "worker": "ts-node -r tsconfig-paths/register src/workers/index.ts",
     "build": "tsc && tsc-alias",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
